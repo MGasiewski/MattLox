@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "AstPrinter",
+            "request": "launch",
+            "mainClass": "com.matt.lox.AstPrinter",
+            "projectName": "jilox_d794731b"
+        },
+        {
+            "name": "C Launch",
+            "request": "launch",
+            "program": "${workspaceFolder}",
+            "args": [
+                "1718374195"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
