@@ -3,7 +3,9 @@ package com.matt.lox;
 import static com.matt.lox.TokenType.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Scanner {
     private final String source;
@@ -11,7 +13,27 @@ public class Scanner {
     private int start = 0;
     private int current = 0;
     private int line = 1;
-    
+    private static final Map<String, TokenType> keywords;    
+
+    static{
+        keywords = new HashMap<>();
+        keywords.put("and", AND);
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("super", SUPER);
+        keywords.put("this", THIS);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
+    }
+
     Scanner(String source){
         this.source= source;
     }
@@ -93,7 +115,12 @@ public class Scanner {
         while(isAlphaNumeric(peek())){
             advance();
         }
-        addToken(IDENTIFIER);
+        var text = source.substring(start, current);
+        var type = keywords.get(text);
+        if (type == null) {
+            type = IDENTIFIER;
+        }
+        addToken(type);
     }
 
     private boolean isAlpha(char c) {
