@@ -2,6 +2,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "GenerateAst",
+            "request": "launch",
+            "mainClass": "com.matt.lox.tool.GenerateAst",
+            "projectName": "jilox_d794731b"
+        },
+        {
+            "type": "java",
+            "name": "Lox",
+            "request": "launch",
+            "mainClass": "com.matt.lox.Lox",
+            "projectName": "jilox_d794731b"
+        },
+        {
+            "type": "java",
             "name": "AstPrinter",
             "request": "launch",
             "mainClass": "com.matt.lox.AstPrinter",

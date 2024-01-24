@@ -1,17 +1,27 @@
 package com.matt.lox;
 
+import java.util.List;
+
+import com.matt.lox.Expr.Assign;
 import com.matt.lox.Expr.Binary;
 import com.matt.lox.Expr.Grouping;
 import com.matt.lox.Expr.Literal;
 import com.matt.lox.Expr.Unary;
+import com.matt.lox.Expr.Variable;
+import com.matt.lox.Stmt.Block;
+import com.matt.lox.Stmt.Expression;
+import com.matt.lox.Stmt.Print;
+import com.matt.lox.Stmt.Var;
 
-class Interpreter implements Expr.Visitor<Object> {
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
+    private Environment environment = new Environment();
 
-    void interpret(Expr expression){
+    void interpret(List<Stmt> statements){
         try{
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for(var statement: statements){
+                execute(statement);
+            }
         }catch(RuntimeError err){
             Lox.runtimeError(err);
         }
@@ -20,6 +30,12 @@ class Interpreter implements Expr.Visitor<Object> {
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
+
+    private void execute(Stmt stmt){
+        stmt.accept(this);
+    }
+
+
 
     @Override
     public Object visitBinaryExpr(Binary expr) {
@@ -59,7 +75,7 @@ class Interpreter implements Expr.Visitor<Object> {
             case BANG_EQUAL:
                 return !isEqual(left, right);
             case EQUAL_EQUAL:
-                return !isEqual(left, right);
+                return isEqual(left, right);
         }
 
         //unreachable
@@ -140,6 +156,60 @@ class Interpreter implements Expr.Visitor<Object> {
         }
 
         return object.toString();
+    }
+
+    @Override
+    public Void visitExpressionStmt(Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    @Override
+    public Void visitVarStmt(Var stmt) {
+        Object value = null;
+        if(stmt.initializer!=null){
+            value = evaluate(stmt.initializer);
+        }
+
+        environment.define(stmt.name.lexeme, value);
+        return null;
+    }
+
+    @Override
+    public Object visitVariableExpr(Variable expr) {
+        return environment.get(expr.name);
+    }
+
+    @Override
+    public Object visitAssignExpr(Assign expr) {
+        var value = evaluate(expr.Value);
+        environment.assign(expr.name, value);
+        throw new UnsupportedOperationException("Unimplemented method 'visitAssignExpr'");
+    }
+
+    @Override
+    public Void visitBlockStmt(Block stmt) {
+        executeBlock(stmt.statements, new Environment(environment));
+        return null;
+    }
+
+    void executeBlock(List<Stmt> statements, Environment environment){
+        var previous = this.environment;
+        try{
+            this.environment = environment;
+            for(var statement: statements){
+                execute(statement);
+            }
+        }finally{
+            this.environment = previous;
+        }
     }
     
 }

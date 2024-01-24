@@ -1,9 +1,11 @@
 package com.matt.lox;
 
+import com.matt.lox.Expr.Assign;
 import com.matt.lox.Expr.Binary;
 import com.matt.lox.Expr.Grouping;
 import com.matt.lox.Expr.Literal;
 import com.matt.lox.Expr.Unary;
+import com.matt.lox.Expr.Variable;
 
 class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr){
@@ -56,5 +58,17 @@ class AstPrinter implements Expr.Visitor<String> {
             ));
 
         System.out.println(new AstPrinter().print(expression));
+    }
+
+    @Override
+    public String visitVariableExpr(Variable expr) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'visitVariableExpr'");
+    }
+
+    @Override
+    public String visitAssignExpr(Assign expr) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'visitAssignExpr'");
     }
 }
